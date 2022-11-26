@@ -1,13 +1,13 @@
 #include <fltKernel.h>
 #include <dontuse.h>
 #include <suppress.h>
-
+#include <ucxxrt.h>
 #include "Kernel-Bridge/DriverEvents.h"
 #include "Kernel-Bridge/FilterCallbacks.h"
 #include "Kernel-Bridge/IOCTLHandlers.h"
 #include "Kernel-Bridge/IOCTLs.h"
 
-#include "API/CppSupport.h"
+//#include "API/CppSupport.h"
 
 #pragma prefast(disable:__WARNING_ENCODE_MEMBER_FUNCTION_POINTER, "Not valid for kernel mode drivers")
 
@@ -20,7 +20,7 @@ namespace {
 
 EXTERN_C_START
 
-DRIVER_INITIALIZE DriverEntry;
+DRIVER_INITIALIZE DriverMain;
 
 static NTSTATUS SEC_ENTRY FilterInstanceSetup(
     _In_ PCFLT_RELATED_OBJECTS FltObjects,
@@ -56,7 +56,7 @@ static NTSTATUS DriverUnload(
 EXTERN_C_END
 
 #ifdef ALLOC_PRAGMA
-#pragma alloc_text(INIT, DriverEntry)
+#pragma alloc_text(INIT, DriverMain)
 #pragma alloc_text(PAGE, FilterUnload)
 #pragma alloc_text(PAGE, FilterInstanceSetup)
 #pragma alloc_text(PAGE, DriverStub)
@@ -133,7 +133,7 @@ static CONST FLT_REGISTRATION FilterRegistration =
 };
 
 
-extern "C" NTSTATUS NTAPI DriverEntry(
+extern "C" NTSTATUS NTAPI DriverMain(
     _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
 ) {
@@ -142,7 +142,7 @@ extern "C" NTSTATUS NTAPI DriverEntry(
     // Initialization of POOL_NX_OPTIN:
     ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
 
-    __crt_init(); // Global objects initialization
+    //__crt_init(); // Global objects initialization
 
     DriverObject->DriverUnload = reinterpret_cast<PDRIVER_UNLOAD>(DriverUnload);
     DriverObject->MajorFunction[IRP_MJ_CREATE]  = DriverStub;
@@ -345,11 +345,11 @@ static VOID PowerCallback(PVOID CallbackContext, PVOID Argument1, PVOID Argument
     UNREFERENCED_PARAMETER(CallbackContext);
     if (reinterpret_cast<SIZE_T>(Argument1) != PO_CB_SYSTEM_STATE_LOCK) return;
 
-    if (Argument2) {
-        OnSystemWake();
-    } else {
-        OnSystemSleep();
-    }
+    //if (Argument2) {
+    //    OnSystemWake();
+    //} else {
+    //    OnSystemSleep();
+    //}
 }
 
 _Function_class_(DRIVER_UNLOAD)
@@ -361,7 +361,7 @@ static NTSTATUS DriverUnload(_In_ PDRIVER_OBJECT DriverObject)
 
     OnDriverUnload(DriverObject, DeviceInstance);
 
-    __crt_deinit(); // Global objects destroying
+    //__crt_deinit(); // Global objects destroying
 
     if (PowerCallbackRegistration)
         ExUnregisterCallback(PowerCallbackRegistration);

@@ -13,7 +13,7 @@
 #include "MemoryUtils.h"
 #include "Callable.h"
 
-#include "Hypervisor.h"
+//#include "Hypervisor.h"
 #include "PTE.h"
 #include "Registers.h"
 #include "MSR.h"

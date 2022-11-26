@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\ucxxrt.3.0.5\build\ucxxrt.props" Condition="Exists('..\packages\ucxxrt.3.0.5\build\ucxxrt.props')" />
+  <Import Project="..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.props" Condition="Exists('..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,11 +22,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API\CommPort.cpp" />
-    <ClCompile Include="API\CppSupport.cpp">
-      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</WholeProgramOptimization>
-    </ClCompile>
     <ClCompile Include="API\CPU.cpp" />
-    <ClCompile Include="API\Hypervisor.cpp" />
+    <ClCompile Include="API\Hypervisor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="API\Importer.cpp" />
     <ClCompile Include="API\IO.cpp" />
     <ClCompile Include="API\KernelShells.cpp" />
@@ -54,7 +56,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>Kernel_Bridge</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,23 +85,23 @@
     <TargetVersion>Windows7</TargetVersion>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
     <SpectreMitigation>false</SpectreMitigation>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows7</TargetVersion>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-    <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
     <SpectreMitigation>false</SpectreMitigation>
     <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+    <ConfigurationType>Driver</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -133,16 +135,18 @@
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(KM_IncludePath);$(KIT_SHARED_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <ExecutablePath>$(WDKBinRoot_x86);$(WDKContentRoot)tools\$(WDKBuildFolder)\tracing\x64;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(KM_IncludePath);$(KIT_SHARED_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <ExecutablePath>$(WDKBinRoot_x86);$(WDKContentRoot)tools\$(WDKBuildFolder)\tracing\x64;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
@@ -212,12 +216,13 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <SupportJustMyCode>false</SupportJustMyCode>
       <EnablePREfast>false</EnablePREfast>
-      <PreprocessorDefinitions>POOL_NX_OPTIN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_AMD64_;POOL_NX_OPTIN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\HookLib\HookLib\HookLib\;..\HookLib\HookLib\Zydis\include\;$(IntDir);%(AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4100;4189;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <PostBuildEvent>
       <Command>makecab /f ../x64-debug.ddf</Command>
@@ -238,7 +243,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <PreprocessorDefinitions>POOL_NX_OPTIN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_AMD64_;POOL_NX_OPTIN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IntelJCCErratum>true</IntelJCCErratum>
       <ExceptionHandling>false</ExceptionHandling>
       <PrecompiledHeaderFile>
@@ -247,6 +252,7 @@
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <ControlFlowGuard>false</ControlFlowGuard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4100;4189;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <PostBuildEvent>
       <Command>makecab /f ../x64-release.ddf</Command>
@@ -264,15 +270,20 @@
     <ClInclude Include="..\CommonTypes\PTE.h" />
     <ClInclude Include="..\CommonTypes\Registers.h" />
     <ClInclude Include="..\CommonTypes\SVM.h" />
-    <ClInclude Include="..\CommonTypes\VMX.h" />
+    <ClInclude Include="..\CommonTypes\VMX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\HookLib\HookLib\HookLib\HookLib.h" />
     <ClInclude Include="..\SharedTypes\CtlTypes.h" />
     <ClInclude Include="..\SharedTypes\FltTypes.h" />
     <ClInclude Include="..\SharedTypes\WdkTypes.h" />
     <ClInclude Include="API\CommPort.h" />
-    <ClInclude Include="API\CppSupport.h" />
     <ClInclude Include="API\CPU.h" />
-    <ClInclude Include="API\Hypervisor.h" />
+    <ClInclude Include="API\Hypervisor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="API\Importer.h" />
     <ClInclude Include="API\IO.h" />
     <ClInclude Include="API\KernelShells.h" />
@@ -298,13 +309,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="API\VMM.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.targets" Condition="Exists('..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.props'))" />
+    <Error Condition="!Exists('..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YY.NuGet.Import.Helper.1.0.0.4\build\native\YY.NuGet.Import.Helper.targets'))" />
+    <Error Condition="!Exists('..\packages\ucxxrt.3.0.5\build\ucxxrt.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ucxxrt.3.0.5\build\ucxxrt.props'))" />
+  </Target>
 </Project>

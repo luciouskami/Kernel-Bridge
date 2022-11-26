@@ -24,7 +24,7 @@
 
 #include <PTE.h>
 #include <Registers.h>
-#include <VMX.h>
+//#include <VMX.h>
 
 #include <intrin.h>
 

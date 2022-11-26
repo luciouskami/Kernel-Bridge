@@ -62,9 +62,6 @@
     <ClCompile Include="API\OSVersion.cpp">
       <Filter>API</Filter>
     </ClCompile>
-    <ClCompile Include="API\CppSupport.cpp">
-      <Filter>API</Filter>
-    </ClCompile>
     <ClCompile Include="API\IO.cpp">
       <Filter>API</Filter>
     </ClCompile>
@@ -134,9 +131,6 @@
       <Filter>API</Filter>
     </ClInclude>
     <ClInclude Include="API\Locks.h">
-      <Filter>API</Filter>
-    </ClInclude>
-    <ClInclude Include="API\CppSupport.h">
       <Filter>API</Filter>
     </ClInclude>
     <ClInclude Include="API\IO.h">
@@ -237,6 +231,7 @@
     <None Include="Exports.def">
       <Filter>Main</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="API\VMM.asm">

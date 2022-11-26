@@ -19,7 +19,7 @@
 #include "../API/KernelShells.h"
 #include "../API/StringsAPI.h"
 #include "../API/Signatures.h"
-#include "../API/Hypervisor.h"
+//#include "../API/Hypervisor.h"
 
 #include "IOCTLs.h"
 
@@ -1930,52 +1930,52 @@ namespace
         );
     }
 
-    NTSTATUS FASTCALL KbVmmEnable(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
-    {
-        UNREFERENCED_PARAMETER(RequestInfo);
-        UNREFERENCED_PARAMETER(ResponseLength);
-        return Hypervisor::Virtualize() ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
-    }
+    //NTSTATUS FASTCALL KbVmmEnable(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
+    //{
+    //    UNREFERENCED_PARAMETER(RequestInfo);
+    //    UNREFERENCED_PARAMETER(ResponseLength);
+    //    return Hypervisor::Virtualize() ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+    //}
 
-    NTSTATUS FASTCALL KbVmmDisable(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
-    {
-        UNREFERENCED_PARAMETER(RequestInfo);
-        UNREFERENCED_PARAMETER(ResponseLength);
-        return Hypervisor::Devirtualize() ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
-    }
+    //NTSTATUS FASTCALL KbVmmDisable(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
+    //{
+    //    UNREFERENCED_PARAMETER(RequestInfo);
+    //    UNREFERENCED_PARAMETER(ResponseLength);
+    //    return Hypervisor::Devirtualize() ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;
+    //}
 
-    NTSTATUS FASTCALL KbVmmInterceptPage(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
-    {
-        UNREFERENCED_PARAMETER(ResponseLength);
+    //NTSTATUS FASTCALL KbVmmInterceptPage(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
+    //{
+    //    UNREFERENCED_PARAMETER(ResponseLength);
 
-        if (RequestInfo->InputBufferSize != sizeof(KB_VMM_INTERCEPT_PAGE_IN))
-            return STATUS_INFO_LENGTH_MISMATCH;
+    //    if (RequestInfo->InputBufferSize != sizeof(KB_VMM_INTERCEPT_PAGE_IN))
+    //        return STATUS_INFO_LENGTH_MISMATCH;
 
-        auto Input = static_cast<PKB_VMM_INTERCEPT_PAGE_IN>(RequestInfo->InputBuffer);
-        bool Status = Hypervisor::InterceptPage(
-            Input->PhysicalAddress,
-            Input->OnReadPhysicalAddress,
-            Input->OnWritePhysicalAddress,
-            Input->OnExecutePhysicalAddress,
-            Input->OnExecuteReadPhysicalAddress,
-            Input->OnExecuteWritePhysicalAddress
-        );
+    //    auto Input = static_cast<PKB_VMM_INTERCEPT_PAGE_IN>(RequestInfo->InputBuffer);
+    //    bool Status = Hypervisor::InterceptPage(
+    //        Input->PhysicalAddress,
+    //        Input->OnReadPhysicalAddress,
+    //        Input->OnWritePhysicalAddress,
+    //        Input->OnExecutePhysicalAddress,
+    //        Input->OnExecuteReadPhysicalAddress,
+    //        Input->OnExecuteWritePhysicalAddress
+    //    );
 
-        return Status ? STATUS_SUCCESS : STATUS_NOT_SUPPORTED;
-    }
+    //    return Status ? STATUS_SUCCESS : STATUS_NOT_SUPPORTED;
+    //}
 
-    NTSTATUS FASTCALL KbVmmDeinterceptPage(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
-    {
-        UNREFERENCED_PARAMETER(ResponseLength);
+    //NTSTATUS FASTCALL KbVmmDeinterceptPage(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
+    //{
+    //    UNREFERENCED_PARAMETER(ResponseLength);
 
-        if (RequestInfo->InputBufferSize != sizeof(KB_VMM_DEINTERCEPT_PAGE_IN))
-            return STATUS_INFO_LENGTH_MISMATCH;
+    //    if (RequestInfo->InputBufferSize != sizeof(KB_VMM_DEINTERCEPT_PAGE_IN))
+    //        return STATUS_INFO_LENGTH_MISMATCH;
 
-        auto Input = static_cast<PKB_VMM_DEINTERCEPT_PAGE_IN>(RequestInfo->InputBuffer);
-        bool Status = Hypervisor::DeinterceptPage(Input->PhysicalAddress);
+    //    auto Input = static_cast<PKB_VMM_DEINTERCEPT_PAGE_IN>(RequestInfo->InputBuffer);
+    //    bool Status = Hypervisor::DeinterceptPage(Input->PhysicalAddress);
 
-        return Status ? STATUS_SUCCESS : STATUS_NOT_SUPPORTED;
-    }
+    //    return Status ? STATUS_SUCCESS : STATUS_NOT_SUPPORTED;
+    //}
 
     NTSTATUS FASTCALL KbExecuteShellCode(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T ResponseLength)
     {
@@ -2475,10 +2475,10 @@ NTSTATUS FASTCALL DispatchIOCTL(IN PIOCTL_INFO RequestInfo, OUT PSIZE_T Response
         /* 85 */ KbUnloadModule,
 
         // Hypervisor:
-        /* 86 */ KbVmmEnable,
-        /* 87 */ KbVmmDisable,
-        /* 88 */ KbVmmInterceptPage,
-        /* 89 */ KbVmmDeinterceptPage,
+        ///* 86 */ KbVmmEnable,
+        ///* 87 */ KbVmmDisable,
+        ///* 88 */ KbVmmInterceptPage,
+        ///* 89 */ KbVmmDeinterceptPage,
 
         // Stuff u kn0w:
         /* 90 */ KbExecuteShellCode,

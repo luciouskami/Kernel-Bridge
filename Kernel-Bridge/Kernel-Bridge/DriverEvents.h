@@ -39,5 +39,5 @@ VOID OnDriverClose(
     PIO_STACK_LOCATION IrpStack
 );
 
-VOID OnSystemSleep();
-VOID OnSystemWake();
+//VOID OnSystemSleep();
+//VOID OnSystemWake();
